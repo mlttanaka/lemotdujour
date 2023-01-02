@@ -1,6 +1,6 @@
 """
 Applet: Le Mot du Jour
-Summary: Shows a FrenchPod101's French Word of the Day
+Summary: Shows FrenchPod101's French Word of the Day
 Description: Displays the French Word of the Day from FrenchPod101.
 Author: mlttanaka
 """
