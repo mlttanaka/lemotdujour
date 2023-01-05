@@ -21,6 +21,10 @@ def start_pretty():
     print("* ------------------------------------------------------ *")
     print("* Starting app:  Le Mot du Jour")
 
+def chompity_chomp(ugly_string):
+    # Chomps off the white space from the beginning and end of a string.
+    return " ".join(ugly_string.split())
+
 
 def main():
     start_pretty()
@@ -34,6 +38,7 @@ def main():
 
         mot_francais = lmdj_dict["mot_francais"]
         mot_anglais = lmdj_dict["mot_anglais"]
+        classe_de_mot = lmdj_dict["classe_de_mot"]
     else:
         print("* My data cache is empty!! Gonna get some fresh data.")
 
@@ -48,20 +53,25 @@ def main():
         if mot_francais == "":
             fail("Failed to find French word from web page")
         mot_anglais = corps.find(".r101-wotd-widget__english").first().text()
+        classe_de_mot = chompity_chomp(
+            corps.find(".r101-wotd-widget__class").first().text()
+            )
 
         lmdj_json = json.encode({
             "mot_francais": mot_francais,
-            "mot_anglais": mot_anglais
+            "mot_anglais": mot_anglais,
+            "classe_de_mot": classe_de_mot
         })
 
         cache.set(CACHE_KEY, lmdj_json, CACHE_TTL)
 
     print("* Le mot du jour est, \"%s\"." % mot_francais)
     print("* The English translation is, \"%s\"." % mot_anglais)
+    print("* Class of word: \"%s\"" % classe_de_mot)
+
 
     return render.Root(
         render.Column(
-            expanded=True,
             cross_align="start",
             children = [
                 render.Row(
@@ -89,32 +99,31 @@ def main():
                     ]
                 ),
                 render.Padding(
-                    pad = (2, 2, 0, 0),
-                    child = render.Column(
-                        expanded = True,
-                        main_align = "space_around",
-                        children = [
-                            render.Marquee(
-                                 width = 60,
-                                 child = render.Text(
-                                     content = mot_francais,
-                                     color = "#D2691E",
-                                     font = "6x13"
-                                     ),
-                                 offset_start=2,
-                                 offset_end=2,
-                            ),
-                            render.Marquee(
-                                 width = 60,
-                                 child = render.Text(
-                                     content = mot_anglais,
-                                     color = "#33b5e5",
-                                     font= "tom-thumb"
-                                     ),
-                                 offset_start=2,
-                                 offset_end=2,
-                            )
-                        ]
+                    pad = (1, 0, 1, 0),
+                    child = render.Marquee(
+                        render.Column(
+                            children = [ 
+                                render.WrappedText(
+                                    content = mot_francais,
+                                    color = "#D2691E",
+                                    font = "6x13",
+                                ),
+                                render.WrappedText(
+                                    content = mot_anglais,
+                                    color = "#33b5e5",
+                                    font= "tom-thumb"
+                                ),
+                                render.WrappedText(
+                                    content = classe_de_mot,
+                                    color = "#666",
+                                    font= "tom-thumb"
+                                )
+                            ]
+                        ),
+                        height = 26,
+                        offset_start = 0,
+                        offset_end = 0,
+                        scroll_direction = "vertical",
                     )
                 )
             ]
