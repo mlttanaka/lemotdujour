@@ -142,3 +142,9 @@ def main():
             ]
         )
     )
+
+def get_schema():
+    return schema.Schema(
+        version = "1",
+        fields = [],
+    )
