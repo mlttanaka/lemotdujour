@@ -17,11 +17,11 @@ CACHE_KEY = "lmdj"
 CACHE_TTL = 10800  # 3 hours
 
 def start_pretty():
-    # Pretty lines to indicate the code is running and make
-    # the terminal output more readable when debugging.
+    # Add decorative lines and title to make output readable for humans.
 
-    print("* ------------------------------------------------------ *")
-    print("* Starting app:  Le Mot du Jour")
+    print("+-------------------------+")
+    print("| Running: Le Mot du Jour |")
+    print("+-------------------------+")
 
 def format_classe(ugly_string):
     # Remove white space and parentheses from an ugly string, and
@@ -44,7 +44,7 @@ def main():
     cached_dict = cache.get(CACHE_KEY)
 
     if cached_dict != None:
-        print("* I already have some data in the cache. Let's use it, shall we?")
+        print("Using cached data...")
 
         lmdj_dict = json.decode(cached_dict)
 
@@ -52,7 +52,7 @@ def main():
         mot_anglais = lmdj_dict["mot_anglais"]
         classe_de_mot = lmdj_dict["classe_de_mot"]
     else:
-        print("* My data cache is empty!! Gonna get some fresh data.")
+        print("Fetching new data...")
 
         reponse = http.get(LE_MOT_DU_JOUR_URL)
 
@@ -77,9 +77,9 @@ def main():
 
         cache.set(CACHE_KEY, lmdj_json, CACHE_TTL)
 
-    print("* Le mot du jour est, \"%s\"." % mot_francais)
-    print("* The English translation is, \"%s\"." % mot_anglais)
-    print("* Class of word: \"%s\"" % classe_de_mot)
+    print("Le mot du jour est, \"%s.\"" % mot_francais)
+    print("In English this means, \"%s.\"" % mot_anglais)
+    print("It's this class of word: %s" % classe_de_mot)
 
     return render.Root(
         render.Column(
