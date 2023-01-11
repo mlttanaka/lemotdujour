@@ -5,11 +5,11 @@ Description: Displays the French Word of the Day from FrenchPod101.
 Author: mlttanaka
 """
 
-load("render.star", "render")
-load("http.star", "http")
-load("html.star", "html")
 load("cache.star", "cache")
 load("encoding/json.star", "json")
+load("html.star", "html")
+load("http.star", "http")
+load("render.star", "render")
 load("schema.star", "schema")
 
 LE_MOT_DU_JOUR_URL = "https://www.frenchpod101.com/french-phrases/"
