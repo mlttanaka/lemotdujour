@@ -10,6 +10,7 @@ load("http.star", "http")
 load("html.star", "html")
 load("cache.star", "cache")
 load("encoding/json.star", "json")
+load("schema.star", "schema")
 
 LE_MOT_DU_JOUR_URL = "https://www.frenchpod101.com/french-phrases/"
 CACHE_KEY = "lmdj"
