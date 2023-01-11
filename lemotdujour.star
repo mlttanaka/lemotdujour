@@ -18,12 +18,25 @@ CACHE_TTL = 10800  # 3 hours
 def start_pretty():
     # Pretty lines to indicate the code is running and make
     # the terminal output more readable when debugging.
+    
     print("* ------------------------------------------------------ *")
     print("* Starting app:  Le Mot du Jour")
 
-def chompity_chomp(ugly_string):
-    # Chomps off the white space from the beginning and end of a string.
-    return " ".join(ugly_string.split())
+def format_classe(ugly_string):
+    # Remove white space and parentheses from an ugly string, and
+    # if the cleaned string contains more than one word,
+    # return the cleaned string in reversed word order separated
+    # by a space. Otherwise, just return the cleaned string.
+    
+    cleaned_string = ugly_string.strip().replace("(", "").replace(")", "").split()
+    if len(cleaned_string) > 1:
+        start = len(cleaned_string) - 1
+        reversed_word_order = [cleaned_string[i] for i in range(start, -1, -1)]
+    
+        return " ".join(reversed_word_order)
+    else:
+        return " ".join(cleaned_string)
+
 
 
 def main():
@@ -53,7 +66,7 @@ def main():
         if mot_francais == "":
             fail("Failed to find French word from web page")
         mot_anglais = corps.find(".r101-wotd-widget__english").first().text()
-        classe_de_mot = chompity_chomp(
+        classe_de_mot = format_classe(
             corps.find(".r101-wotd-widget__class").first().text()
             )
 
