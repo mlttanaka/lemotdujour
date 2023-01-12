@@ -110,8 +110,7 @@ def main():
                     ],
                 ),
                 render.Padding(
-                    pad = (1, 0, 1, 0),
-                    child = render.Marquee(
+                    render.Marquee(
                         render.Column(
                             children = [
                                 render.WrappedText(
@@ -136,6 +135,7 @@ def main():
                         offset_end = 0,
                         scroll_direction = "vertical",
                     ),
+                    pad = (1, 0, 1, 0),
                 ),
             ],
         ),
