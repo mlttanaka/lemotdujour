@@ -30,13 +30,7 @@ def format_classe(ugly_string):
     # by a space. Otherwise, just return the cleaned string.
 
     cleaned_string = ugly_string.strip().replace("(", "").replace(")", "").split()
-    if len(cleaned_string) > 1:
-        start = len(cleaned_string) - 1
-        reversed_word_order = [cleaned_string[i] for i in range(start, -1, -1)]
-
-        return " ".join(reversed_word_order)
-    else:
-        return " ".join(cleaned_string)
+    return ", ".join(cleaned_string)
 
 def main():
     start_pretty()
@@ -83,7 +77,7 @@ def main():
 
     return render.Root(
         render.Column(
-            cross_align = "start",
+            cross_align = "space_evenly",
             children = [
                 render.Row(
                     expanded = True,
@@ -112,6 +106,7 @@ def main():
                 render.Padding(
                     render.Marquee(
                         render.Column(
+                            main_align = "space_evenly",
                             children = [
                                 render.WrappedText(
                                     content = mot_francais,
@@ -130,15 +125,16 @@ def main():
                                 ),
                             ],
                         ),
-                        height = 25,
-                        offset_start = 25,
-                        offset_end = 25,
+                        height = 24, 
+                        offset_start = 24,
+                        offset_end = 24,
                         scroll_direction = "vertical",
                     ),
-                    pad = (1, 0, 1, 0),
+                    pad = 1,
                 ),
             ],
         ),
+        delay=90,
     )
 
 def get_schema():
