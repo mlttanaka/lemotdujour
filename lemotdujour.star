@@ -87,22 +87,22 @@ def main():
             children = [
                 render.Row(
                     expanded = True,
-                    main_align = "space_between",
+                    main_align = "center",
                     children = [
                         render.Box(
-                            width = 21,
+                            width = 22,
                             height = 8,
                             color = "#0055A4",
                             child = render.Text("MOT"),
                         ),
                         render.Box(
-                            width = 22,
+                            width = 20,
                             height = 8,
                             color = "#fff",
                             child = render.Text("DU", color = "#555"),
                         ),
                         render.Box(
-                            width = 21,
+                            width = 22,
                             height = 8,
                             color = "#EF4135",
                             child = render.Text("JOUR"),
@@ -116,7 +116,7 @@ def main():
                                 render.WrappedText(
                                     content = mot_francais,
                                     color = "#D2691E",
-                                    font = "6x13",
+                                    font = "Dina_r400-6",
                                 ),
                                 render.WrappedText(
                                     content = mot_anglais,
@@ -130,9 +130,9 @@ def main():
                                 ),
                             ],
                         ),
-                        height = 26,
-                        offset_start = 0,
-                        offset_end = 0,
+                        height = 25,
+                        offset_start = 25,
+                        offset_end = 25,
                         scroll_direction = "vertical",
                     ),
                     pad = (1, 0, 1, 0),
