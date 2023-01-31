@@ -1,20 +1,21 @@
 """
 Applet: Le Mot du Jour
-Summary: Shows FrenchPod101's French Word of the Day
-Description: Displays the French Word of the Day from FrenchPod101.
+Summary: Shows FeedBlitz's French Word of the Day
+Description: Displays the French Word of the Day from FeedBlitz.
 Author: mlttanaka
 """
 
 load("cache.star", "cache")
 load("encoding/json.star", "json")
-load("html.star", "html")
 load("http.star", "http")
 load("render.star", "render")
 load("schema.star", "schema")
+load("xpath.star", "xpath")
 
-LE_MOT_DU_JOUR_URL = "https://www.frenchpod101.com/french-phrases/"
+LE_MOT_DU_JOUR_URL = "https://feeds.feedblitz.com/french-word-of-the-day&x=1"
 CACHE_KEY = "lmdj"
 CACHE_TTL = 10800  # 3 hours
+
 
 def start_pretty():
     # Add decorative lines and title to make output readable for humans.
@@ -23,14 +24,17 @@ def start_pretty():
     print("| Running: Le Mot du Jour |")
     print("+-------------------------+")
 
-def format_classe(ugly_string):
-    # Remove white space and parentheses from an ugly string, and
-    # if the cleaned string contains more than one word,
-    # return the cleaned string in reversed word order separated
-    # by a space. Otherwise, just return the cleaned string.
+def strip_article(mot):
+    # Strips the article from the word.
+    return mot.removeprefix("le ").removeprefix("la ")
 
-    cleaned_string = ugly_string.strip().replace("(", "").replace(")", "").split()
-    return ", ".join(cleaned_string)
+def scale_font(mot):
+    # Use a smaller font if the word contains too many characters
+    # to fit nicely in the display.
+    if len(mot) >= 12:
+        return "5x8"
+    return "Dina_r400-6"
+
 
 def main():
     start_pretty()
@@ -53,15 +57,15 @@ def main():
         if reponse.status_code != 200:
             fail("Le Mot du Jour request failed with status %d", reponse.status_code)
 
-        corps = html(reponse.body())
+        content = reponse.body()
 
-        mot_francais = corps.find(".r101-wotd-widget__word").first().text()
-        if mot_francais == "":
-            fail("Failed to find French word from web page")
-        mot_anglais = corps.find(".r101-wotd-widget__english").first().text()
-        classe_de_mot = format_classe(
-            corps.find(".r101-wotd-widget__class").first().text(),
-        )
+        xml = xpath.loads(content)
+        cdata = xml.query_all("//title")
+        sommat, mot_anglais= str(cdata[1]).split(": ")
+        mot_francais = strip_article(sommat)
+        nested_cdata = xml.query_all("//description")
+        xml = xpath.loads(nested_cdata[1])
+        classe_de_mot, example_francais, example_anglais = xml.query_all("//td")
 
         lmdj_json = json.encode({
             "mot_francais": mot_francais,
@@ -75,8 +79,13 @@ def main():
     print("In English this means, \"%s.\"" % mot_anglais)
     print("It's this class of word: %s" % classe_de_mot)
 
+    # TODO Squeeze the sample sentences below onto the display later.
+    print("Sample sentence en Français: %s" % example_francais) 
+    print("Sample sentence in English: %s" % example_anglais) 
+
     return render.Root(
-        render.Column(
+        delay = 90,
+        child = render.Column(
             cross_align = "space_evenly",
             children = [
                 render.Row(
@@ -104,37 +113,36 @@ def main():
                     ],
                 ),
                 render.Padding(
-                    render.Marquee(
-                        render.Column(
+                    pad = 1,
+                    child = render.Marquee(
+                        height = 24, 
+                        offset_start = 24,
+                        offset_end = 24,
+                        scroll_direction = "vertical",
+                        child = render.Column(
                             main_align = "space_evenly",
                             children = [
                                 render.WrappedText(
                                     content = mot_francais,
                                     color = "#D2691E",
-                                    font = "Dina_r400-6",
+                                    font = scale_font(mot_francais),
                                 ),
-                                render.WrappedText(
+                                render.Text(
                                     content = mot_anglais,
                                     color = "#33b5e5",
                                     font = "tom-thumb",
                                 ),
-                                render.WrappedText(
+                                render.Text(
                                     content = classe_de_mot,
                                     color = "#666",
                                     font = "tom-thumb",
                                 ),
                             ],
                         ),
-                        height = 24, 
-                        offset_start = 24,
-                        offset_end = 24,
-                        scroll_direction = "vertical",
                     ),
-                    pad = 1,
                 ),
             ],
         ),
-        delay=90,
     )
 
 def get_schema():
